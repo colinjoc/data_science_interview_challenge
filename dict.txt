@@ -1,0 +1,19 @@
+CPL_wrt_BC=change in cost per lead with respect to business category
+
+client_state=client's location
+
+duration=how long the client has been running advertising campaigns in months
+
+num_prods=how many distinct advertising products the client has bought
+
+calls=number of calls received
+
+CPL_wrt_self=change in client's cost per lead in the past three months
+
+churn=target column (0=retention | 1=churn)
+
+avg_budget=average monthly budget spent on advertising campaigns
+
+BC=client's business category
+
+clicks=number of clicks received
