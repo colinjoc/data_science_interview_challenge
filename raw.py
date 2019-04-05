@@ -13,7 +13,7 @@ print(data.isnull().sum())
 # only null values in CPL_wrt_self
 
 # look at each series
-print(data["CPL_wrt_BC"].describe())
+print(data["CPL_wrt_BC"0].describe())
 data["CPL_wrt_BC"].hist(bins = 100)
 plt.show()
 
@@ -64,26 +64,30 @@ def transform_data(in_data):
     transformed["CPL_wrt_self_null"] = in_data["CPL_wrt_self"].isnull()
     transformed["CPL_wrt_self"]=in_data["CPL_wrt_self"].fillna(in_data["CPL_wrt_self"].dropna().mean()) # mean
 
-    transformed = pd.concat([transformed, pd.get_dummies(in_data["client_state"]), pd.get_dummies(in_data["BC"])] , axis = 'col')
+    transformed = pd.concat([transformed, pd.get_dummies(in_data["client_state"]), pd.get_dummies(in_data["BC"])] , axis = 1)
     # drop original client_state and BC columns 
     transformed=transformed.drop(["BC","client_state"],axis=1)
     target_labels= transformed["churn"]
     input_vals = transformed.loc[:,transformed.columns !="churn"]
     return input_vals,target_labels
     
-in_vals,target=transform_data(data)
-
 # look at k-folds
 
-from sklearn.ensemble import RandomForestRegressor
-forest=RandomForestRegressor()
-forest.fit(in_vals,target)
+from sklearn.ensemble import RandomForestClassifier
+import numpy as np
+from sklearn.model_selection import cross_val_score
+from sklearn.metrics import confusion_matrix
+
+in_vals,target=transform_data(data)
 
 
-from sklearn.linear_model import LinearRegression
-lin_reg=LinearRegression()
-lin_reg.fit(in_vals,target)
 
-some_data = in_vals.iloc[:10]
-some_labels = target.iloc[:10]
-print("Predictions:", lin_reg.predict(some_data))
+forest=RandomForestClassifier()
+forest.fit(in_vals[:9000],target[:9000])
+
+confusion_matrix(forest.predict(in_vals[9000:]), target[9000:])
+
+
+cross_val_score(forest, in_vals, target, cv=3, scoring="accuracy")
+
+
